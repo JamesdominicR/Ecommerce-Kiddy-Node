@@ -46,7 +46,7 @@ router.get("/", verifyLogin, async (req, res, next) => {
     productHelper.getBestSelling().then((allProducts) => {
       let user = req.session.user;
       console.log(carousel, "this is banner");
-      res.render("user/index", {
+      res.send({
         title: "KIDDIE",
         user,
         allProducts,
@@ -99,7 +99,7 @@ router.get("/signup", async (req, res, next) => {
   let referel = await req.query.referel;
   console.log(referel, "user.js110");
   if (!req.session?.user?.loggedIn) {
-    res.render("user/signup", { title: "KIDDIE", referel });
+    res.send({ title: "KIDDIE", referel });
   } else {
     res.redirect("/");
   }
@@ -114,7 +114,7 @@ router.post("/signup", async (req, res, next) => {
       userHelper.userCheck(req.body).then((ress) => {
         let errorMsg = ress.msg;
         if (ress.userExist) {
-          res.render("user/signup", { errorMsg });
+          res.send({ errorMsg });
         } else {
           userSignup = req.body;
 
@@ -127,13 +127,13 @@ router.post("/signup", async (req, res, next) => {
             })
             .then((ress) => {
               let signupPhone = req.body.phone;
-              res.render("user/signupOtp", { signupPhone, refereUser });
+              res.send( { signupPhone, refereUser });
             });
         }
       });
     } else {
       let errorMsg = resss.msg;
-      res.render("user/signup", { errorMsg });
+      res.send({ errorMsg });
     }
   });
 });
@@ -144,7 +144,7 @@ router.get("/login", (req, res, next) => {
   if (req.session.user?.loggedIn) {
     res.redirect("/");
   } else {
-    res.render("user/user-login", {
+    res.send({
       title: "KIDDIE",
       signupSuccess,
       blockMsg,
@@ -192,7 +192,7 @@ router.post("/phone-verify", function (req, res, next) {
         })
         .then((ress) => {
           OtpPhone = phone;
-          res.render("user/otp-verify", { OtpPhone });
+          res.send({ OtpPhone });
         });
     } else {
       req.session.userLoginErr = "Invalid Phone Number";
@@ -239,14 +239,14 @@ router.get("/resendOtp", (req, res) => {
     })
     .then((ress) => {
       let OtpPhone = req.session.mob;
-      res.render("otp-verify", { OtpPhone });
+      res.send({ OtpPhone });
     });
 });
 
 // ==========================GET FORGOT PASSWORD PAGE=================
 var forgotPassErr;
 router.get("/forgot-pass", (req, res, next) => {
-  res.render("user/forgot-pass", { forgotPassErr });
+  res.send({ forgotPassErr });
 });
 
 // forgot pass phone number page post
@@ -263,7 +263,7 @@ router.post("/forgot-pass", function (req, res, next) {
         })
         .then((ress) => {
           OtpPhone = phone;
-          res.render("user/forget-otp", { OtpPhone });
+          res.send({ OtpPhone });
         });
     } else {
       forgotPassErr = "No Account With This Phone Number";
@@ -305,14 +305,14 @@ router.get("/resendotp", (req, res) => {
     })
     .then((ress) => {
       let OtpPhone = req.session.mob;
-      res.render("otp-verify", { OtpPhone });
+      res.send({ OtpPhone });
     });
 });
 
 // =========================GET RESET PASSWORD PAGE=================
 router.get("/reset-password", function (req, res, next) {
   req.session.mob = null;
-  res.render("user/reset-password", { title: "KIDDIE", OtpPhone });
+  res.send({ title: "KIDDIE", OtpPhone });
 });
 
 // post resetted password
@@ -382,7 +382,7 @@ router.get("/product-details", async (req, res, next) => {
     let categoryPro = response[0].productSubcategory;
     userHelper.getrelatedproducts(categoryPro).then((relatedProducts) => {
       console.log(relatedProducts[0], "This is related Products");
-      res.render("user/product-details", {
+      res.send({
         title: "KIDDIE",
         user: req.session.user,
         productDetails: response,
@@ -410,7 +410,7 @@ router.get("/product-list", async function (req, res, next) {
   let user = req.session?.user;
   if (isSubProducts) {
     let subProducts = await productHelper.getSubcatProducts(subCatName);
-    res.render("user/product-list", {
+    res.send({
       title: "Kiddie",
       user,
       cartCount,
@@ -420,7 +420,7 @@ router.get("/product-list", async function (req, res, next) {
     });
   } else if (isBrandProducts) {
     let brandProducts = await productHelper.getBrandProducts(brandName);
-    res.render("user/product-list", {
+    res.send({
       title: "Kiddie",
       user,
       cartCount,
@@ -430,7 +430,7 @@ router.get("/product-list", async function (req, res, next) {
     });
   } else {
     productHelper.getAllProducts().then(async (allProducts) => {
-      res.render("user/product-list", {
+      res.send({
         title: "Kiddie",
         user,
         allProducts,
@@ -482,7 +482,7 @@ router.get("/cart", async (req, res, next) => {
     } else {
       grandTotal = grandTotal[0]?.grandTotal;
     }
-    res.render("user/shopping-cart", {
+    res.send({
       title: "KIDDIE",
       user: req.session.user,
       products,
@@ -571,7 +571,7 @@ router.get("/checkout", verifyBlock, async function (req, res, next) {
     let addresses = await userHelper.getAddress(req.session.user._id);
     let grandTotal = await userHelper.getGrandTotal(req.session.user._id);
     grandTotal = grandTotal[0]?.grandTotal;
-    res.render("user/checkout", {
+    res.send({
       title: "KIDDIE",
       user: req.session.user,
       addresses,
@@ -590,7 +590,7 @@ router.get("/buy-now", verifyBlock, async function (req, res, next) {
   var proId = req.query.proId;
   let products = await productHelper.getOneProduct(proId);
   let addresses = await userHelper.getAddress(req.session.user._id);
-  res.render("user/buy-now", {
+  res.send({
     title: "KIDDIE",
     user: req.session.user,
     addresses,
@@ -859,7 +859,7 @@ router.get("/success", async (req, res) => {
 });
 
 router.get("/cancel", (req, res) => {
-  res.render("payment-cancel", { title: "KIDDIE", user: req.session.user });
+  res.send({ title: "KIDDIE", user: req.session.user });
 });
 
 router.post("/verify-payment", verifyBlock, function (req, res, next) {
@@ -877,7 +877,7 @@ router.post("/verify-payment", verifyBlock, function (req, res, next) {
 });
 
 router.get("/order-placed", verifyBlock, async function (req, res, next) {
-  res.render("user/order-placed", { title: "KIDDIE", user: req.session.user });
+  res.send({ title: "KIDDIE", user: req.session.user });
 });
 
 router.get("/my-orders", verifyBlock, async function (req, res, next) {
@@ -887,7 +887,7 @@ router.get("/my-orders", verifyBlock, async function (req, res, next) {
     cartCount = null;
   }
   userHelper.getAllOrders(req.session.user._id).then((allOrders) => {
-    res.render("user/my-orders", {
+    res.send({
       title: "Kiddie",
       user: req.session.user,
       allOrders,
@@ -914,7 +914,7 @@ router.get("/wishlist", verifyBlock, async function (req, res, next) {
   if (wishlists.length == 0) {
     wishlistMsg = "Wishlist is Empty";
   }
-  res.render("user/wishlist", {
+  res.send({
     title: "KIDDIE",
     user: req.session.user,
     wishlists,
@@ -957,7 +957,7 @@ var profileMsg;
 router.get("/user-profile", verifyBlock, async function (req, res, next) {
   let user = await userHelper.getOneUser(req.session.user._id);
   await userHelper.getAddress(req.session.user._id).then((resp) => {
-    res.render("user/user-profile", {
+    res.send({
       title: "KIDDIE",
       user,
       resp,
@@ -986,7 +986,7 @@ router.post("/change-password", verifyBlock, function (req, res, next) {
 
 // add address get
 router.get("/add-address", verifyBlock, function (req, res, next) {
-  res.render("user/add-address", {
+  res.send({
     title: "KIDDIE",
     user: req.session.user,
 
@@ -1025,7 +1025,7 @@ router.post("/add-checkout-address", verifyBlock, function (req, res, next) {
 // edit address get
 router.get("/edit-address", verifyBlock, function (req, res, next) {
   userHelper.getOneAddress(req.query.id, req.session.user._id).then((resp) => {
-    res.render("user/edit-address", {
+    res.send({
       title: "KIDDIE",
       user: req.session.user,
 
@@ -1072,7 +1072,7 @@ router.post("/delete-address", verifyBlock, function (req, res, next) {
 router.get("/arunms", async (req, res) => {
   offer = await productHelper.getOfferproducts();
   console.log(offer, "Arunms");
-  res.render("user/slider", { offer });
+  res.send({ offer });
 });
 
 // ===============================ProfilePic=========================
@@ -1091,9 +1091,9 @@ router.get("/myaddress", verifyBlock, async (req, res) => {
   let user = req.session.user;
 
   if (Address[0]?.address) {
-    res.render("user/my-address", { Address, user });
+    res.send({ Address, user });
   } else {
-    res.render("user/add-address");
+    res.send;
   }
 });
 
@@ -1114,7 +1114,7 @@ router.get("/brand-view", async (req, res) => {
   let user = req.session?.user;
   if (isSubProducts) {
     let subProducts = await productHelper.getSubcatProducts(subCatName);
-    res.render("product-list", {
+    res.send({
       title: "BE ARC",
       user,
       cartCount,
@@ -1124,7 +1124,7 @@ router.get("/brand-view", async (req, res) => {
     });
   } else if (isBrandProducts) {
     let brandProducts = await productHelper.getBrandProducts(brandName);
-    res.render("product-list", {
+    res.send({
       title: "KIDDIE",
       user,
       cartCount,
@@ -1137,7 +1137,7 @@ router.get("/brand-view", async (req, res) => {
       let response = await productHelper.getMyBrandProducts(req.query.id);
       if (response[0]) {
         userBrands = true;
-        res.render("user/product-list", {
+        res.send({
           response,
           userBrands,
           title: "KIDDIE",
@@ -1161,7 +1161,7 @@ router.get("/brand-view", async (req, res) => {
 });
 // ==============================Password Restteing email=================
 router.get("/emailreset", (req, res) => {
-  res.render("user/email-reset", { forgotEmailErr });
+  res.send({ forgotEmailErr });
 });
 
 //======================= forgot password email page page post==================
@@ -1199,7 +1199,7 @@ router.post("/getRestlink", function (req, res, next) {
 
 // =========================GET RESET PASSWORD PAGE=================
 router.get("/reset-passwordWemail", function (req, res, next) {
-  res.render("user/reset-passwithmail", { title: "KIDDIE" });
+  res.send({ title: "KIDDIE" });
 });
 
 // ===========================post resetted password
@@ -1220,7 +1220,7 @@ router.get("/walletAlert", (req, res) => {
 let upload = require("../middleware/multer");
 // =============================Multer=======================
 router.get("/arunmsssss", (req, res) => {
-  res.render("../arun");
+  res.send;
 });
 
 router.post("/multerprofile", upload.array("avatar", 10), (req, res) => {
@@ -1233,7 +1233,7 @@ router.post("/multerprofile", upload.array("avatar", 10), (req, res) => {
 
 
 router.get("/multer", (req,res)=>{
-  res.render("../arun")
+  res.send
 });
 
 

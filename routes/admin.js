@@ -42,7 +42,7 @@ router.get("/", verifyLogin,async function (req, res, next) {
 
   
 
-  res.render("admin/admin-dashboard", {
+  res.send({
     title: "Admin",
     admin: true,
     header: "ADMIN DASHBOARD",
@@ -101,7 +101,7 @@ router.get("/login", function (req, res, next) {
   if (req.session.adminLoggedIn) {
     res.redirect("/admin");
   } else {
-    res.render("admin/admin-login", {
+    res.send({
       title: "Admin",
       admin: true,
       noSidebar: true,
@@ -136,7 +136,7 @@ var catMsg;
 router.get("/category", verifyLogin, function (req, res, next) {
   
   adminHelper.getCategory().then((allCategory) => {
-    res.render("admin/category", {
+    res.send({
       admin: true,
       header: "CATEGORY MANAGEMENT",
       catMsg,
@@ -232,7 +232,7 @@ var brandMsg;
 router.get("/brand", verifyLogin, function (req, res, next) {
   
   adminHelper.getBrand().then((allBrand) => {
-    res.render("admin/brand-manage", {
+    res.send({
       admin: true,
       header: "BRAND MANAGEMENT",
       brandMsg,
@@ -317,7 +317,7 @@ router.get("/add-product",verifyLogin, function (req, res, next) {
     if (allCategory) {
       adminHelper.getBrand().then((allBrand) => {
         if (allBrand) {
-          res.render("admin/add-product", {
+          res.send({
             title: "Add Product",
             admin: true,
             header: "PRODUCT MANAGEMENT",
@@ -428,7 +428,7 @@ router.get("/view-product", verifyLogin, function (req, res, next) {
  
   productHelper.getAllProducts().then((response) => {
     if (response) {
-      res.render("admin/view-products", {
+      res.send({
         title: "View Product",
         admin: true,
         header: "PRODUCT MANAGEMENT",
@@ -471,7 +471,7 @@ router.get("/edit-product/", verifyLogin, function (req, res, next) {
       adminHelper.getBrand().then((allBrand) => {
         if (allBrand) {
           adminHelper.getCategory().then((allCategory) => {
-            res.render("admin/edit-product", {
+            res.send({
               title: "Edit Product",
               admin: true,
               header: "PRODUCT MANAGEMENT",
@@ -576,7 +576,7 @@ router.get("/view-users", verifyLogin, (req, res, next) => {
  
   adminHelper.getUsers().then((response) => {
     if (response) {
-      res.render("admin/view-users", {
+      res.send({
         title: "View Users",
         admin: true,
         header: "USER MANAGEMENT",
@@ -613,7 +613,7 @@ router.get("/blocked-users", verifyLogin, (req, res, next) => {
   
   adminHelper.getBlockedUsers().then((response) => {
     if (response) {
-      res.render("admin/blocked-users", {
+      res.send({
         title: "blocked Users",
         admin: true,
         header: "USER MANAGEMENT",
@@ -627,7 +627,7 @@ router.get("/blocked-users", verifyLogin, (req, res, next) => {
 router.get("/manage-banner", verifyLogin, async (req, res, next) => {
   
   let allBanner = await adminHelper.getBanner();
-  res.render("admin/manage-banner", {
+  res.send({
     title: "Banner Management",
     admin: true,
     header: "BANNER MANAGEMENT",
@@ -685,7 +685,7 @@ router.get("/manage-orders", verifyLogin, (req, res, next) => {
   
   adminHelper.viewOrders().then((response) => {
     if (response) {
-      res.render("admin/order-management", {
+      res.send({
         title: "Order Management",
         admin: true,
         header: "ORDER MANAGEMENT",
@@ -917,7 +917,7 @@ router.get("/ordered-products", verifyLogin, (req, res, next) => {
   let proId = req.query.proId;
   productHelper.getOrderProducts(orderId, userId, proId).then((products) => {
 
-    res.render("admin/ordered-products", {
+    res.send({
       products,
       title: "Ordered Products",
       admin: true,
@@ -933,7 +933,7 @@ router.get("/product-offer", verifyLogin,async (req, res, next) => {
   let offerList = await productHelper.getProductOffer()
   let allProducts = await productHelper.getAllProducts()
 
-  res.render("admin/product-offer", {
+  res.send({
     title: "Offer Management",
     admin: true,
     header: "OFFER MANAGEMENT",
@@ -963,7 +963,7 @@ router.get("/category-offer", verifyLogin,async (req, res, next) => {
  
   let allCategory = await adminHelper.getCategory()
   let offerList = await productHelper.getCategoryOffer()
-  res.render("admin/category-offer", {
+  res.send({
     title: "Offer Management",
     admin: true,
     header: "OFFER MANAGEMENT",
@@ -990,7 +990,7 @@ router.post("/delete-category-offer", verifyLogin,async (req, res, next) => {
 router.get("/coupon-offer", verifyLogin,async (req, res, next) => {
   
   let couponList = await productHelper.getCouponOffer()
-  res.render("admin/coupon-offer", {
+  res.send({
     title: "Coupon Management",
     admin: true,
     header: "COUPON MANAGEMENT",
@@ -1028,7 +1028,7 @@ router.get("/sales-report", verifyLogin,async (req, res, next) => {
   let fromDate = new Date(req.query.fromDate)
   let tillDate = new Date(req.query.tillDate)
   let salesReport = await productHelper.getSalesReport(fromDate,tillDate)
-  res.render("admin/sales-report", {
+  res.send({
     title: "Sales Report",
     admin: true,
     header: "SALES REPORT",
@@ -1040,7 +1040,7 @@ router.get("/sales-report", verifyLogin,async (req, res, next) => {
 router.get("/stock-report", verifyLogin,async (req, res, next) => {
   
   let stockReport = await productHelper.getStockReport()
-  res.render("admin/stock-report", {
+  res.send({
     title: "STOCK Report",
     admin: true,
     header: "STOCK REPORT",
@@ -1057,7 +1057,7 @@ router.get("/user-report", verifyLogin,async (req, res, next) => {
   
   let userReport = await adminHelper.getUserReport()
 
-  res.render("admin/user-report", {
+  res.send({
     title: "User Report",
     admin: true,
     header: "USER REPORT",
@@ -1072,17 +1072,17 @@ router.post("/add-curosel", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.render("admin/add-category", { admin: true });
+        res.send({ admin: true });
       }
     });
-    res.render("admin/add-category");
+    res.send;
   });
 });
 router.get("/sales-charts", verifyLogin,async (req, res, next) => {
 
   
   
-  res.render("admin/sales-charts",{admin:true})
+  res.send({admin:true})
 });
 
 // ====================================salesChart===================
